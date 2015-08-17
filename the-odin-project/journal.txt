@@ -1,0 +1,114 @@
+30 July 2015
+-----------------
+
+12:53 - I started using The Odin Project on Monday, July 27th.
+
+It is now Thursday, July 30th and I have done a little bit of work every day to work through the materials.  I got through HTML and CSS on Monday and Tuesday, and yesterday started on Javascript and today am working in jQuery.
+
+I wanted to start this journal to remind myself that, while day-to-day progress can seem slow, each day is just a step on the journey from sucking to being sort of good and eventually to being employable.
+
+Maybe I'll put on my TODO to make this journal updatable from the command line.  Or something.  For now, textmate is fine.
+
+GOAL: Get into Back End Programming Basics
+
+13:44 - This goal may not be possible.  See "etch-a-sketch".  This is gonna be good. *head->desk*.
+
+EOD: Ermahgerd etch-a-sketch complete.  That wasn't so bad.  Though I should try the two modifications they pointed out...
+
+-----------------
+31 July 2015
+-----------------
+
+13:19 - This morning I had a meeting with a career coaching service to determine if it would be at all helpful to me.  I decided that having someone to be accountable to, and also a deadline for a goal would be useful.
+
+I signed up for a one hour session with a woman named Vicki Moultry for Friday, September 25th at 9am.  (Yes, it's in my calendar).  Factoring in Laura's wedding and most likely 2-3 weeks of fashion work, I think that's a good time to have it.
+
+So that's a short-term deadline.  What is the short-term goal I want to have accomplished by then?  I certainly want to be done with The Odin Project's Web Development 101 section by the end of next week and into Ruby Programming.  I think it is realistic to say that I should be into Ruby on Rails by September 25th.  I can obviously update that, but honestly up to that point the lessons look like review for me.
+
+Today was also the day I had said would be when I reassess the money situation.  Well, it's not great.  I've started looking at part-time, temp, and barista work to pad my way.  On the one hand, I don't want to be a moocher.  On the other hand, we have saved and saved and saved, and right now we have a buffer that will carry me through about 10 months before going dry.
+
+I don't think it will take me 10 months to find a job.  I think it might take something like that amount of time to find a job in web development.  The Code Newbie podcast is super encouraging, though.  Like the one I listened to today: 8 months from 0-employed?!  Less than, really.  I really do think that if I put in the time every day and combine that with the help from the career coach, I can do this.  I just have to be... I don't want to say fearless, but certainly more confident and just keep plugging away.
+
+From today's meeting, I think I know what I want from my job, I just need to write it down.
+1.  I want to be challenged
+2.  I want to work on something/for a company that helps people
+3.  I want to work on a team, but also make individual contributions to the team.
+	- Smaller company/organization where maybe structure isn't too rigid and specialization isn't too high.
+	- Small team that allows growth.
+4.  I want to work somewhere that encourages critical thinking and problem solving.
+5.  I don't want to do busy work.
+
+21:40 - The nice thing about having dabbled in all of this before is that I don't have to struggle as hard to absorb a lot of the big, fundamental core concepts (Object-Oriented Programming, what is a string, etc).
+
+Unfortunately, that doesn't mean I don't have to go through the review.  Especially since Ruby is a completely new language to me.  It does seem to have some pretty neat features so far, though...
+
+Time for bed.
+
+-----------------
+1 August 2015
+-----------------
+
+15:43 - TODO refactor englishNumber.rb.  Thousands + repeats too much, need to put 'hundred', 'thousand', 'million', 'billion', etc into an array of some description.
+Also modify "store_repeat.rb" according to comments in file.
+
+-----------------
+3 August 2015
+-----------------
+
+13:42 - Today I learned how fast the word changes.  Trying to use "Learn Ruby" with test-driven development strategy.  Super excited.  Only problem, this curriculum uses a deprecated version of rspec, rails, AND ruby.  So gonna have to downgrade all.  Also rake seems to be failing. Wooooooo.
+
+Speaking of which, I need to remember to enter the following when I'm done with this project:
+
+		rvm use ruby-2.2.1
+		
+Or I'll be stuck in the past!
+
+17:23 - I've decided to just use their stupid online environment to actually DO today's lesson rather than take the slow, painful detour down the path of.... whatever.
+
+-----------------
+7 August 2015
+-----------------
+
+13:57 - Yesterday things got frustrating.  I shouldn't be surprised.  It's not an easy thing.  But the Caesar cipher... it's not that hard to implement, really.  I just think that the way I've done it is shitty.  I can't tell whether it is more productive to keep banging my head against the wall, or look at other solutions to identify ideas I didn't have.
+
+I think I just answered that question....
+
+One nice solution was to use % 26 to keep the shift point inside the alphabet.  This is clever, it works not only on numbers > 26, but also negative numbers.  I wonder if it can be implemented not only in the shift factor, but in the shifted number to loop around again?
+Really just maintaining case has been the hardest part, because it feels like as soon as you do that, you're either repeating code or calling the same sub-routine again.  Which is fine, if you do the second one.
+That person's solution sort of forgot that if the shift point was > 8, and the letter was lowercase, it could still accidentally get pushed into not only the wrong letter, but made uppercase.
+
+Then there's the "n.times { shift one }" approach, which again works, but seems not so elegant.
+
+I like this one the best:
+
+def caesar_cypher(string, shiftnum = 0)    
+    outstring = ''
+    string.each_byte do |x|
+        a = x
+        if a == ' '.sum
+            outstring+= a.chr
+        elsif a <= 'Z'.sum
+            b = ((a - 'A'.sum + shiftnum) % 26) + 'A'.sum
+            outstring += b.chr
+        else
+            b = ((a - 'a'.sum + shiftnum) % 26) + 'a'.sum
+            outstring += b.chr
+        end
+    end
+    return outstring
+end
+
+it still repeats, but it seems to be the most clever use of the underlying values, and the use of each_byte is nice and clean as opposed to #unpack and #pack
+
+19:21 - I had to move on from Caesar Cipher to Stock Picker and Substrings.  These went way better.  Just for the record, future you, today got way better.  And then I went back with a cooler mind and re-did Caesar Cipher based on what I learned and what I had read from other people's solutions.  It seems that I could use work on strings, and that I'm not a hundred percent sure how to utilize regular expressions.  We'll get there though.
+
+-----------------
+16 August 2015
+-----------------
+
+09:59 - TODO today:
+	1. Answer Dianne's questions about the blog	[COMPLETE]
+	2. Start Josh's HomeAway notebook				[STARTED]
+	3. Format Dad's pages								[TESTIMONIALS WAITING ON FEEDBACK]
+	4. Build Tic-Tac-Toe									
+	5. Build Jekyll blog for me

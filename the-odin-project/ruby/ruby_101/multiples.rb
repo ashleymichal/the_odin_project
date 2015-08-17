@@ -1,0 +1,1 @@
+(1..1000).select {|multiple| multiple % 3 == 0 || multiple % 5 == 0}

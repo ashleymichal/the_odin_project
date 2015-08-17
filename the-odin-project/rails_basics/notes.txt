@@ -1,0 +1,18 @@
+Points to Ponder
+
+Look through these now and then use them to test yourself after doing the assignment
+
+    What is Rails?
+    What language is Rails written in?
+    Refresher: What are gems?
+    What are the seven gems that make up Rails?
+    What is the purpose of the gemfile?
+    What is the command to create a new Rails app from the command line?
+    How is a GET request different from a POST request?
+    What is REST?
+    What is a view?
+    What is a controller?
+    What is a model?
+
+Other questions
+
