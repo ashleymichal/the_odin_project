@@ -1,0 +1,174 @@
+############################
+##  Ruby Building Blocks  ##
+############################
+
+Numbers, Operators and Expressions:
+	What's the difference between an Integer and a Float?
+		integers represent whole numbers, floats represent decimal numbers.
+	Why should you be careful when converting back and forth between integers and floats?
+		integers aren't very smart about rounding and will always round down, so that 5.9.to_i => 5, not 6.
+	What's the difference between =, ==, and ===?
+		= is for assignment to a variable, == means "is equal to" (not necessarily identical), and === means "includes" (like (1..4 === 3) or Animal === Dog since Dog is a subclass of Animal)
+	How do you do exponents in Ruby?
+		base**exponent
+	What is a range?
+		a continuous sequence of integers
+	How do you create a range?
+		see below
+	What's the difference between (1..3) and (1...3)?
+		(1..3) includes 3, (1...3) excludes 3 (a lot more like the Python range)
+	What are three ways to create a range?
+		either with shorthand (start..end), (start...end) or Range.new(start, end)
+		
+
+Strings:
+	What's the difference between single and double quotes?
+		they are almost indistinguishable in function, they just need to be used and escaped properly to avoid conflict
+		you can only use string interpolation inside double quotes
+	What is string interpolation?
+		inserting a non-string object into a string using #{object} or %{reference} % (reference: object)
+		IT ONLY WORKS INSIDE DOUBLE QUOTES, a single-quoted string will escape the special characters and ignore the interpolation.  Which might be okay if you're trying to illustrate string interpolation!
+	What are escape characters?
+		using a \ before a special character to indicate to the interpreter that the character needs to ignore its special behavior, or in the case of \n newlines or \t tabs, to use its special behavior.
+	What are line breaks?
+		\n, like a carriage return
+	How do you make other things into strings?
+		use .to_s
+	How do you concatenate strings?
+		either +, .+(), or .concat().  You can also append using <<
+	How do you access a specific character or substring?
+		indexing starting at [0].  can also input a range inside the []
+	How do you split up strings into arrays?
+		.split()
+	How are strings and arrays similar?
+		they can be indexed
+	How do you get and clean up user input on the command line?
+		gets.chomp removes the carriage return, or trailing whitespace(?)
+	What does it mean that strings are "mutable" and why care?
+		mutable means they can be changed, so you an use a method to change the string itself rather than simply returning a modified copy of the string.
+	What is a symbol?
+		it's like a string that's been locked down; denoted by colon -> :symbol.  often used as hash keys instead of strings because they always point to the same place in memory within the same program
+	How is a symbol different from a string?
+		it is immutable, so it can't be messed with.
+	What is a Regular Expression (RegEx)?
+		special syntax for querying strings
+	How can you center or right-justify a string?
+		.center(total_number_of_char_spaces, padding_char=" "), .rjust(total_number_of_char_spaces, padding_char=" ")
+
+Arrays:
+	What are three ways to create an array?
+		Array.new(number_spaces, default_value), [], Array[] (all of these methods can be instantiated empty or with data already in them)
+	How do you prepopulate the array with default data?
+		the second argument to Array#new
+	How do you access items in an array?
+		indexing! just like strings. You can also index within an item
+	How can you access a specific group of items in an array?
+		index a range OR use a regex
+	How do you modify the items in an array?
+		they are mutable, so you just access and assign that item i.e. array[0] = new_value
+	How do you combine arrays?
+		first_array + second_array
+	How do you find the values in one array that aren't in another?
+		Subtract the second from the first ie [first_array] - [second_array]
+	How do you find values in both arrays?
+		"union", or [first_array] & [second_array]
+	What is the difference between push/pop and shift/unshift?
+		#pop/#push work on the last element in the array, #shift/#unshift work on the first element.. all four of them modify the original
+	What is the shovel operator?
+		<<, this appends to an array
+	How is > arr.pop different from > arr[-1]?
+		#pop removes the element from the array, indexing does not
+	How is pushing or <<ing another array into your array different from just adding them together?
+		the new array is added as a single element of the first array, whereas adding them together appends each individual element
+		i.e. [a, b, c] + [d, e, f] => [a, b, c, d, e, f]; [a, b, c] << [d, e, f] => [a, b, c, [d, e, f]]
+	How do you delete items in an array?
+		#delete_at(index); #clear; reassign to empty array
+	Why should you be careful deleting items in an array?
+		it changes the index of the remaining elements
+	How can you convert arrays to strings?
+		array.join(separator)
+	How can you convert from other data types to arrays?
+		#to_a
+	How can you figure out if an array contains a particular value?
+		array.include?(value)
+	How do you find the biggest item in an array?
+		#max
+	How do you find the smallest item in an array?
+		#min
+	How do you remove any duplicates from your array?
+		#uniq
+	How to you find out how big an array is?
+		#size
+	How do you put an array in order?
+		#sort(method)
+	What are the naming conventions for arrays?
+		descriptive, snake-case, plural
+	What should you store in arrays?
+		groups of similar objects
+
+Hashes:
+	What is a hash?
+		data container accessed using keys instead of indeces 
+	What are keys and values?
+		keys are the accessor, values are what the keys point to
+	How is a hash similar to an Array?
+		it stores data
+	How is a hash different from an Array?
+		it uses keys instead of indexing
+	What are 3 ways to create a hash?
+		{}, Hash.new, 
+	What is the hash rocket?
+		=>, indicateds connection between key and value
+	How do you access data in a hash?
+		hash[key] => value
+	How do you change data in a hash?
+		same way as with an array
+	What types of data are good to store in a hash?
+		related data with different types, where order doesnt matter
+	What are options hashes?
+		they allow a method to accept a variable number of optional arguments
+	How do you delete data from a hash?
+		either #delete or set the value to nil
+	How do you add hashes together?
+		#merge
+	How do you list out all the keys or values?
+		#keys, #values returns requested info in array
+	How do you see if the hash contains a key or value?
+		hash.keys.include?(key) or hash.values.include?(value)
+	What is a set?
+		a hash where all values are set to either true or false
+
+Dates and Times:
+	How do you get the current date and time?
+		Time.new or Time.now
+	How do you find just the Year? Month? Hour? Second? Weekday?
+		Time#year, #month, #hour, #sec, #wday.  there is also #day and #min
+	How do you create a Time specifically for 12/25/2013?
+		Time.new(2013, 12, 25)
+	How do you find how many days have passed between two Times?
+		subtract one from the other! 
+	What's the difference between UTC and GMT and Local times?
+		UTC = Coordinated Universal Time, GMT = Greenwich Mean Time.  Effectively equivalent
+	How would you find out the time that was 100 seconds ago? 10 days ago?
+		Time.now - 100, Time.now - (60*60*24*10) [seconds * minutes * hours * days] <= must be something more direct
+
+Other Random Stuff:
+	What is nil?
+		nothingness
+	How do you check if something is nil?
+		Object.nil?
+	What's the difference between nil and blank and empty?
+		#nil? is nothingness, #empty? has nothing in it, and #blank? ignores whitespace
+		#blank? is a Rails method, not Ruby core
+	Are the following nil or empty?
+	   " " -neither, "" -empty, [] -empty, [""] -neither, {} -empty
+	What's the difference between puts and p and print?
+		puts runs .to_s on the item.  p will also run #inspect.  print does not use linebreak
+	What does inspect do?
+		adds information about the object
+	What do +=, -=, *= and /= do?
+		they are assignment operators that are the equivalent of a = a + b etc
+	What is parallel assignment?
+		assigning two variables on the same line
+	What's the easiest way to swap two variables?
+		parallel assignment i.e. a, b = b, a

@@ -1,0 +1,17 @@
+#container {
+	margin: 10px auto;
+	overflow: auto;
+	width: 960px;
+}
+
+.row {
+	display: block;
+}
+
+.box {
+	display: inline-block;
+	width: 25px; height: 25px;
+	margin: 0px 2px;
+	background-color: black;
+	opacity: 0;
+}
