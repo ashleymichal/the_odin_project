@@ -1,16 +1,17 @@
 class TicTacToe
+  @@space_names = [ :A1, :A2, :A3, :B1, :B2, :B3, :C1, :C2, :C3 ]
   @@winning_combinations = [
     [:A1, :A2, :A3], [:B1, :B2, :B3], [:C1, :C2, :C3],
     [:A1, :B1, :C1], [:A2, :B2, :C2], [:A3, :B3, :C3],
     [:A1, :B2, :C3], [:A3, :B2, :C1]
-  ] # array of arrays
+  ]
   def initialize
-    # initialize 2 players, assign player1 to X and player2 to O
-    @player1 = Player.new
-    @player2 = Player.new
+    # initialize 2 players, assign playerX to X and playerO to O
+    @playerX = Player.new
+    @playerO = Player.new
     # initialize board
     @spaces = []
-    build_spaces
+    board
   end
   
   class Player
@@ -41,10 +42,8 @@ class TicTacToe
         @mark = new_mark
       else
         puts "That space is already filled"
+        return false
       end
-    end
-    def display
-      "[ #{mark} ]"
     end
     def position
       @position
@@ -54,9 +53,8 @@ class TicTacToe
     end
   end
   
-  def build_spaces
-    space_names = [ :A1, :A2, :A3, :B1, :B2, :B3, :C1, :C2, :C3 ]
-    space_names.each do |position|  
+  def board
+    @@space_names.each do |position|  
       @spaces << Space.new(position)
     end
   end
@@ -73,7 +71,14 @@ class TicTacToe
   end
   
   def find_spaces_by_mark(mark)
-    @spaces.select { |space| space.mark == mark.to_sym }
+    marked_spaces = @spaces.select { |space| space.mark == mark.to_sym }
+    marked_spaces.map do |space|
+      space.position
+    end
+  end
+  
+  def board_full?
+    @spaces.none? { |space| space.mark == " " }
   end
   
   def show_board
@@ -81,7 +86,7 @@ class TicTacToe
     puts "---------------"
     row = "A".ord
     @spaces.each do |space|
-      print space.display
+      print "[ #{space.mark} ]"
       if space.position.to_s.include?("3")
         puts "  #{row.chr}"
         puts "---------------"
@@ -90,23 +95,40 @@ class TicTacToe
     end
   end
   
-  def play
-    # until board is full TODO determine if the board is full
-    #   show board
+  def start
+    active_player = @playerX
+      until board_full?
+      # until board is full TODO determine if the board is full
+      #   show board
+      show_board
+      #   get player input in the form of position
+      puts "#{active_player.mark}'s turn"
+      puts "Pick a space by typing in its coordinates i.e. A1: "
+      player_input = gets.chomp.upcase
+      # verify input (in board)
+      if @@space_names.include?(player_input.to_sym)
+      #   update board
+        place_mark(player_input, active_player.mark)
+      #   check for winning combination, return winner if applicable
+        if victory?(active_player)
+          puts "#{active_player.mark}'s win!"
+          return
+        end
+      #   switch player
+        active_player == @playerX ? active_player = @playerO : active_player = @playerX
+      else
+        next
+      end
+    end
     show_board
-    #   player moves
-    #   update board
-    #   check for winning combination, return winner if applicable
-    #   switch player
+    puts "Cats game, no one wins."
     # cats-game if the board fills without a winnder
   end
 
-  def victory(player_spaces)
-    # create "winning combinations" array of Boards
-    # must be able to match either "X"'s or "O"'s but not " "'s
-    @@winning_combinations.include?(player_spaces)
+  def victory?(player)
+    @@winning_combinations.any? { |combo| combo - find_spaces_by_mark(player.mark) == [] }
   end
 end
 
 new_game = TicTacToe.new
-new_game.play
+new_game.start
