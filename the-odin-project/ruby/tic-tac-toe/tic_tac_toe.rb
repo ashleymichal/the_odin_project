@@ -9,7 +9,6 @@ class TicTacToe
     @player1 = Player.new
     @player2 = Player.new
     # initialize board
-    @board = Board.new
     @spaces = []
     build_spaces
   end
@@ -27,12 +26,6 @@ class TicTacToe
       else
         puts "There can only be 2 players" # this should actually throw an exception and ask again... ought to be a more elegant way to handle this.
       end
-    end
-    def self.number_of_players
-      @@number_of_players
-    end
-    def mark
-      @mark
     end
   end
 
@@ -83,20 +76,29 @@ class TicTacToe
     @spaces.select { |space| space.mark == mark.to_sym }
   end
   
-  def display
+  def show_board
+    puts "  1    2    3"
+    puts "---------------"
+    row = "A".ord
     @spaces.each do |space|
-      puts space.display
+      print space.display
+      if space.position.to_s.include?("3")
+        puts "  #{row.chr}"
+        puts "---------------"
+        row += 1
+      end
     end
   end
   
   def play
-    # until board is full
+    # until board is full TODO determine if the board is full
     #   show board
-    #   ask for player input (should be in the form of "RC" i.e. "B2", be sure to capitalize and chomp)
+    show_board
+    #   player moves
     #   update board
     #   check for winning combination, return winner if applicable
     #   switch player
-    # cats-game
+    # cats-game if the board fills without a winnder
   end
 
   def victory(player_spaces)
@@ -105,3 +107,6 @@ class TicTacToe
     @@winning_combinations.include?(player_spaces)
   end
 end
+
+new_game = TicTacToe.new
+new_game.play
