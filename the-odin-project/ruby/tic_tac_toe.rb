@@ -98,31 +98,25 @@ class TicTacToe
   def start
     active_player = @playerX
       until board_full?
-      # until board is full TODO determine if the board is full
-      #   show board
-      show_board
-      #   get player input in the form of position
-      puts "#{active_player.mark}'s turn"
-      puts "Pick a space by typing in its coordinates i.e. A1: "
-      player_input = gets.chomp.upcase
-      # verify input (in board)
-      if @@space_names.include?(player_input.to_sym)
-      #   update board
-        place_mark(player_input, active_player.mark)
-      #   check for winning combination, return winner if applicable
+        begin
+          show_board
+          puts "#{active_player.mark}'s turn"
+          puts "Pick a space by typing in its coordinates i.e. A1: "
+          player_input = gets.chomp.upcase
+          place_mark(player_input, active_player.mark)
+        rescue
+          puts "Invalid entry"
+          retry
+        end
         if victory?(active_player)
           puts "#{active_player.mark}'s win!"
           return
         end
-      #   switch player
         active_player == @playerX ? active_player = @playerO : active_player = @playerX
-      else
-        next
       end
-    end
-    show_board
-    puts "Cats game, no one wins."
-    # cats-game if the board fills without a winnder
+      show_board
+      puts "Cats game, no one wins."
+      # cats-game if the board fills without a winnder
   end
 
   def victory?(player)
