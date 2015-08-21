@@ -9,32 +9,45 @@ class Code
   # takes a string (combo) of 4 letters A..F
   def initialize(random=false)
     unless random
-      begin
-        puts "Enter your secret code."
-        puts "Remember, secret codes must be 4 letters between A and F."
-        @combo = validate(gets)
-      rescue # another opportunity to play with different exceptions
-        puts "Code not valid, try again."
-        retry
-      end
+      make_custom
     else
-      @combo = random
+      make_random
     end
   end
   
-  # def random
-  #   @combo = []
-  #   4.times do
-  #     @combo << #random letter between A and F
-  #   end
-  # end
+  def make_custom
+    begin
+      puts "Enter your secret code."
+      @combo = cleanup(gets)
+    rescue # another opportunity to play with different exceptions
+      puts $!
+      retry
+    end
+  end
+  
+  def make_random
+    @combo = []
+    4.times do
+      @combo << rand(65..70).chr #random letter between A and F
+    end
+  end
 
   # check that all characters in combo are between A and F, and that combo is 4 long
-  def validate(combo)
+  def cleanup(combo)
     combo.gsub!(/\s+/, '')
     combo.upcase!
-    combo.split('')
+    combo = combo.split('')
+    raise "Combo must be 4 letters long" unless combo.length == 4
+    unless combo.all? { |letter| ("A".."F").include?(letter) }
+      raise "Combo must contain only letters A-F"
+    end
+    combo
   end
+  
+  def match
+    # TODO
+  end
+  
 end
 
 =begin NOTES
@@ -56,11 +69,11 @@ GAMEPLAY
 
 step 1.  create Code class with initializer <== done
 
-step 2.  design the matching function(s)
+step 2.  build random code generator (also part of Code class)
+
+step 3.  design the matching function(s)
   - match exact placement and symbol
   - match remaining matches that aren't placed right
-
-step 3.  build random code generator (also part of Code class)
 
 step 4.  build players
 
@@ -76,3 +89,5 @@ Classes:
 
 secret_code = Code.new
 p secret_code.combo
+random_code = Code.new(true)
+p random_code.combo
