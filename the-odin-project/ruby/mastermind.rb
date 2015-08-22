@@ -2,28 +2,31 @@ class Mastermind
   attr_accessor :guesses
   def initialize(player_name)
     @guesses = []
-    @codemaker = PLayer.new
+    @maximum_guesses = 12
+    @codemaker = Player.new
     @secret_code = Code.new(true) # if codemaker is computer
-    @codebreaker = Player.new(name, true)
+    @codebreaker = Player.new(player_name, true)
   end
   
   def play
     # print instructions
-    until victory(codebreaker) || guesses.length == maximum_guesses
+    puts @secret_code.show
+    begin
       # codebreaker makes a guess
-      guess = Code.new
-      if guess.matches == [@@code_length, 0]
-        victory(codebreaker)
-      end
-      guesses << guess
-      # show guesses, plus bulls and cows
+      puts "You have #{@maximum_guesses - @guesses.length} guesses left."
+      @guesses.each { |guess| puts guess.show }
+      @guess = Code.new
+      @guesses << @guess
+    end until victory?(@guess.combo) || @guesses.length >= @maximum_guesses
+    if victory?(@guess.combo)
+      puts "You win!"
+    else
+      puts "You lose!"
     end
-    victory(codemaker)
   end
   
-  def victory(player)
-    puts "#{player} wins!"
-    return
+  def victory?(guess)
+    @secret_code.matches(guess) == [Code.code_length, 0]
   end
   
   class Player
@@ -34,7 +37,7 @@ class Mastermind
   end
   
   class Code
-  @@code_length = 4
+    @@code_length = 4
     attr_reader :combo
     def initialize(random=false)
       unless random
@@ -44,16 +47,27 @@ class Mastermind
       end
     end
     
+    def show
+      @combo.join(' ')
+    end
+    
+    def self.code_length
+      @@code_length
+    end
     # takes a guess and returns an array with the number of bulls (@0) and cows (@1)
     def matches(guess)
       # first find bulls
       bulls = bulls(guess)
       remaining_guess = []
       guess.each_with_index do |letter, index|
-        remaining_guess << letter if bulls.include?(index)
+        remaining_guess << letter unless bulls.include?(index)
+      end
+      remaining_combo = []
+      @combo.each_with_index do |letter, index|
+        remaining_combo << letter unless bulls.include?(index)
       end
       # then find cows
-      cows = cows(remaining_guess)
+      cows = cows(remaining_guess, remaining_combo)
       return [bulls.length, cows]
     end
   
@@ -90,7 +104,7 @@ class Mastermind
     # returns an array of indexes corresponding to "bulls"
     def bulls(guess)
       bulls = []
-      guess.each_with_index do |letter, index|
+      guess.each.with_index do |letter, index|
         bulls << index if letter == @combo[index]
       end
       bulls
@@ -98,8 +112,9 @@ class Mastermind
     
     # takes an array (Code.combo)
     # returns an integer representing the number of "cows"
-    def cows(guess)
+    def cows(guess, combo)
       cows = 0
+      guess.each { |letter| cows += 1 if combo.include?(letter) }
       cows
     end
   end
@@ -107,12 +122,17 @@ end
 
 ## Tests
 
-secret_code = Mastermind::Code.new
-p secret_code.combo
-random_code = Mastermind::Code.new(true) #random
-p random_code.combo
+# secret_code = Mastermind::Code.new
+# p secret_code.combo
+# random_code = Mastermind::Code.new(true) #random
+# p random_code.combo
+#
+# p random_code.matches(secret_code.combo)
 
-p random_code.matches(secret_code.combo)
+puts "Enter your name"
+player_name = gets.chomp
+new_game = Mastermind.new(player_name)
+new_game.play
 
 
 =begin NOTES
