@@ -164,5 +164,13 @@ class Mastermind
   end
 end
 
-new_game = Mastermind.new
-new_game.play
+game_on = true
+while game_on
+  puts "Would you like to play a game? Y/N?"
+  if gets.downcase.include?('y')
+    new_game = Mastermind.new
+    new_game.play
+  else
+    game_on = false
+  end
+end

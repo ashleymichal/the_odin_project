@@ -37,12 +37,10 @@ class TicTacToe
       @mark = @@default_mark
     end
     def mark=(new_mark)
-      # lock mark if it has changed
       if @mark == @@default_mark
         @mark = new_mark
       else
-        puts "That space is already filled"
-        return false
+        raise "That space is already filled"
       end
     end
     def position
@@ -59,11 +57,19 @@ class TicTacToe
     end
   end
   
-  def place_mark(position, mark)
-    # TODO
-    # should take player input which is the position of the Space object, also player mark
-    space = find_space_by_position(position)
-    space.mark=(mark)
+  def place_mark(mark)
+    begin
+      print "Pick a space by typing in its coordinates i.e. A1: "
+      position = gets.chomp.upcase
+      space = find_space_by_position(position)
+      space.mark=(mark)
+    rescue NoMethodError
+      puts "That is not a space. Try again"
+      retry
+    rescue
+      puts $!
+      retry
+    end
   end
   
   def find_space_by_position(position)
@@ -98,16 +104,9 @@ class TicTacToe
   def start
     active_player = @playerX
       until board_full?
-        begin
-          show_board
-          puts "#{active_player.mark}'s turn"
-          puts "Pick a space by typing in its coordinates i.e. A1: "
-          player_input = gets.chomp.upcase
-          place_mark(player_input, active_player.mark)
-        rescue
-          puts "Invalid entry"
-          retry
-        end
+        show_board
+        puts "#{active_player.mark}'s turn"
+        place_mark(active_player.mark)
         if victory?(active_player)
           puts "#{active_player.mark}'s win!"
           return
