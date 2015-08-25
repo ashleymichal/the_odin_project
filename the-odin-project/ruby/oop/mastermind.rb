@@ -1,39 +1,63 @@
 class Mastermind
-  attr_accessor :guesses
   def initialize
-    # @guesses = []
-    # @maximum_guesses = 12
+    @guesses = []
+    @maximum_guesses = 12
+    # Ask player if they want to be codemaker or codebreaker
+    # create Codebreaker and Codemaker players
+    # Codemaker picks secret code
+    # 
     @secret_code = Code.new
-    @guess = Guess.new(@secret_code)
   end
-  
-  def test
-    puts "=========="
-    p @secret_code.show
-    p @guess.show
-    puts "Bulls: #{@guess.bulls.length}"
-    puts "Cows:  #{@guess.cows}"
-    puts "=========="
-  end
-  
   def play
     # print instructions
-    puts @secret_code.show
     begin
       # codebreaker makes a guess
       puts "You have #{@maximum_guesses - @guesses.length} guesses left."
-      @guesses.each { |guess| puts guess.show }
+      puts "+---------+--------+"
+      @guesses.each do |guess| 
+        puts guess.show
+        puts "+---------+--------+"
+      end
       input = gets.chomp
-      @guess = Code.new(input)
+      @guess = Guess.new(@secret_code, input)
       @guesses << @guess
-    end until victory?(@guess) || @guesses.length >= @maximum_guesses
-    if victory?(@guess)
+    end until victory? || @guesses.length >= @maximum_guesses
+    if victory?
       puts "You win!"
     else
       puts "You lose!"
     end
   end
   
+  private
+  def victory?
+    @guess.combo == @secret_code.combo
+  end
+  
+  class Player
+    def initialize(name='Computer', human=false)
+      @name = name
+      @human = human
+    end
+    
+    def guess(secret_code)
+      if @human
+        guess = gets.chomp
+        Guess.new(secret_code, guess)
+      else
+        Guess.new(secret_code)
+      end
+    end
+    
+    def code
+      if @human
+        code = gets.chomp
+        Code.new(code)
+      else
+        Code.new
+      end
+    end
+  end
   class Code
     attr_reader :combo, :length
     def initialize(code="random")
@@ -72,7 +96,6 @@ class Mastermind
        combo
     end
   end
-
   class Guess < Code
     attr_reader :bulls, :cows
     def initialize(to_match, code="random")
@@ -96,6 +119,12 @@ class Mastermind
       # then find cows
       find_cows(remaining_guess.sort, remaining_code.sort)
     end
+    def show
+      matches = ""
+      @bulls.length.times { matches << "+ " }
+      @cows.times { matches << "- " }
+      "| " + super + " | " + matches
+    end
   
     private
     def find_bulls(to_match)
@@ -112,20 +141,7 @@ class Mastermind
       end
     end
   end
-  
-  private
-  def victory?(guess)
-    @guess.combo == @secret_code.combo
-  end 
-  class Player
-    def initialize(name="Computer", human=false)
-      @human = human
-      @name = name
-    end
-  end
 end
 
-8.times do
-  new_game = Mastermind.new
-  new_game.test
-end
+new_game = Mastermind.new
+new_game.play
