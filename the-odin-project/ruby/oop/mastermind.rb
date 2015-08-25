@@ -3,11 +3,32 @@ class Mastermind
     @guesses = []
     @maximum_guesses = 12
     # Ask player if they want to be codemaker or codebreaker
-    # create Codebreaker and Codemaker players
+    build_players
     # Codemaker picks secret code
-    # 
-    @secret_code = Code.new
+    @secret_code = @codemaker.code
   end
+  
+  def build_players
+    print "What is your name?: "
+    player_name = gets.chomp
+    begin
+      puts "Do you want to be the Codemaker or the Codebreaker?"
+      player = gets.chomp
+      if player.downcase == "codemaker"
+        @codemaker   = Player.new(player_name)
+        @codebreaker = Player.new
+      elsif player.downcase == "codebreaker"
+        @codemaker   = Player.new
+        @codebreaker = Player.new(player_name)
+      else
+        raise "Please answer either codebreaker or codemaker"
+      end
+    rescue
+      puts $!
+      retry
+    end
+  end
+  
   def play
     # print instructions
     begin
@@ -18,14 +39,13 @@ class Mastermind
         puts guess.show
         puts "+---------+--------+"
       end
-      input = gets.chomp
-      @guess = Guess.new(@secret_code, input)
+      @guess = @codebreaker.guess(@secret_code)
       @guesses << @guess
     end until victory? || @guesses.length >= @maximum_guesses
     if victory?
-      puts "You win!"
+      puts "#{@codebreaker.name} wins!"
     else
-      puts "You lose!"
+      puts "#{@codemaker.name} wins!"
     end
   end
   
@@ -35,11 +55,11 @@ class Mastermind
   end
   
   class Player
-    def initialize(name='Computer', human=false)
-      @name = name
-      @human = human
+    attr_reader :name
+    def initialize(name='The computer')
+      @name  = name
+      @human = @name != 'The computer'
     end
-    
     def guess(secret_code)
       if @human
         guess = gets.chomp
@@ -48,9 +68,9 @@ class Mastermind
         Guess.new(secret_code)
       end
     end
-    
     def code
       if @human
+        print "Please enter a secret code:  "
         code = gets.chomp
         Code.new(code)
       else
@@ -58,6 +78,7 @@ class Mastermind
       end
     end
   end
+  
   class Code
     attr_reader :combo, :length
     def initialize(code="random")
