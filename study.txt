@@ -1,0 +1,37 @@
+study sheet
+
+METHODS
+
+	**string**
+		#gsub & #gsub!
+
+	**array**
+		#sort <- can take a block!
+		%w(some text) <= will split on whitespace.  Look into this
+
+	**iterators**
+		loop
+
+	**hash**
+		#sort_by (returns array of arrays)
+
+	**kernel**
+		#is_a? object_type
+
+	misc. info about methods
+
+		splat arguments - for when you don't know how many arguments you will have!
+			example:
+				def what_up(greeting, *bros)
+					bros.each { |bro| puts "#{greeting}, #{bro}!" }
+				end
+	
+				what_up("What up", "Justin", "Ben", "Kevin Sorbo")
+				=> What up, Justin!
+				=> What up, Ben!
+				=> What up, Kevin Sorbo!
+
+OTHER INFORMATION
+
+	a <=> b - the combined comparison operator
+		returns -1 if a < b, 0 if a == b, and 1 if a > b

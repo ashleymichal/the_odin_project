@@ -15,31 +15,98 @@
   # show if guess was correct or incorrect
   # if there are no remaining guesses, the player loses
 
-dictionary_file = "5desk.txt"
-# incorrect_guesses = []
-# remaining_guesses = 12
+require 'set'
 
-def load_dictionary(dictionary_file, min_length, max_length)
-  dictionary = File.readlines(dictionary_file)
-  dictionary.each do |word|
-    word.strip!
+class Hangman
+  attr_reader :secret_word, :player, :remaining_guesses
+  def initialize
+    @dictionary = load_dictionary("5desk.txt", 5, 12)
+    @secret_word = Word.new(@dictionary)
+    print "Enter player name: "
+    name = gets.chomp.capitalize
+    @player = Player.new(name)
+    @remaining_guesses = 12
   end
-  dictionary.select { |word| word.length.between?(min_length,max_length) }
-end
-
-def random_word(dictionary)
-  length = dictionary.length
-  dictionary[rand(0...length)].upcase
-end
-
-def show_word(word, guesses=[])
-  masked_word = []
-  word.split("").each do |letter|
-    guesses.include?(letter) ? masked_word << letter : masked_word <<  '_'
+  
+  def play
+    until @remaining_guesses == 0
+      puts "Remaining turns: #{@remaining_guesses}"
+      puts "Your guesses: #{@player.guesses.join(' ')}"
+      puts
+      puts @secret_word.show
+      puts "TESTING ONLY: secret word is #{secret_word.word}"
+      begin
+        print "Enter a new guess: "
+        guess = gets.chomp[0]
+        @player.new_guess(guess)
+      rescue
+        puts $!
+        retry
+      end
+      good_guess = @secret_word.update_masked_word(@player.guesses)
+      if @secret_word.word == @secret_word.masked_word
+        puts "You win!"
+        return
+      end
+      @remaining_guesses -= 1 unless good_guess
+    end
+    puts "You ran out of guesses!"
+    return
   end
-  masked_word.join(' ')
+  
+  private
+  def load_dictionary(dictionary_file, min_length, max_length)
+    dictionary = File.readlines(dictionary_file)
+    dictionary.each do |word|
+      word.strip!
+    end
+    dictionary.select { |word| word.length.between?(min_length,max_length) }
+  end
 end
 
-dictionary = load_dictionary(dictionary_file, 5, 12)
-word = random_word(dictionary)
-puts show_word(word)
+class Player
+  attr_reader :name, :guesses
+  def initialize(name)
+    @name = name
+    @guesses =[]
+  end
+
+  # returns 'nil' if guess is already in the set
+  def new_guess(guess)
+    unless @guesses.include?(guess)
+      @guesses << guess.upcase
+    else
+      raise "You already guessed that letter"
+    end
+  end
+end
+
+class Word
+  attr_reader :word, :masked_word
+  def initialize(dictionary)
+    @word = random(dictionary).upcase.split('')
+    @masked_word = []
+    update_masked_word
+  end
+  
+  def update_masked_word(guesses=[])
+    old = @masked_word
+    @masked_word = []
+    @word.each do |letter|
+      guesses.include?(letter) ? @masked_word << letter : @masked_word <<  '_'
+    end
+    return old != @masked_word
+  end
+  
+  def show
+    @masked_word.join(' ')
+  end
+  
+  private
+  def random(dictionary)
+    dictionary[rand(0...dictionary.length)]
+  end
+end
+
+new_game = Hangman.new
+new_game.play
