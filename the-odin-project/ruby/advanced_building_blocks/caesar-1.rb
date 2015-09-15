@@ -15,6 +15,6 @@ def caesar_cipher(message, shift)
   new_message
 end
 
-## not super proud of this one... needs refactoring and better design. also it doesn't work.  ballz.
+## not super proud of this one... needs refactoring and better design.
 
 puts caesar_cipher("What a string!", 5)
