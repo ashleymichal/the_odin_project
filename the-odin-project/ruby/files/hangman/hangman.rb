@@ -15,96 +15,45 @@
   # show if guess was correct or incorrect
   # if there are no remaining guesses, the player loses
 
-require 'set'
-
 class Hangman
   attr_reader :secret_word, :player, :remaining_guesses
   def initialize
-    @dictionary = load_dictionary("5desk.txt", 5, 12)
+    @dictionary = Dictionary.new("5desk.txt", 5, 12)
     @secret_word = Word.new(@dictionary)
-    print "Enter player name: "
-    name = gets.chomp.capitalize
-    @player = Player.new(name)
     @remaining_guesses = 12
   end
   
-  def play
-    until @remaining_guesses == 0
-      puts "Remaining turns: #{@remaining_guesses}"
-      puts "Your guesses: #{@player.guesses.join(' ')}"
-      puts
-      puts @secret_word.show
-      puts "TESTING ONLY: secret word is #{secret_word.word}"
-      begin
-        print "Enter a new guess: "
-        guess = gets.chomp[0]
-        @player.new_guess(guess)
-      rescue
-        puts $!
-        retry
+  class Dictionary
+    def initialize(dictionary_file, min_length, max_length)
+      dictionary = File.readlines(dictionary_file)
+      dictionary.each do |word|
+        word.strip!
       end
-      good_guess = @secret_word.update_masked_word(@player.guesses)
-      if @secret_word.word == @secret_word.masked_word
-        puts "You win!"
-        return
-      end
-      @remaining_guesses -= 1 unless good_guess
+      @dictionary = dictionary.select { |word| word.length.between?(min_length,max_length) }
     end
-    puts "You ran out of guesses!"
-    return
-  end
-  
-  private
-  def load_dictionary(dictionary_file, min_length, max_length)
-    dictionary = File.readlines(dictionary_file)
-    dictionary.each do |word|
-      word.strip!
-    end
-    dictionary.select { |word| word.length.between?(min_length,max_length) }
-  end
-end
+  end 
 
-class Player
-  attr_reader :name, :guesses
-  def initialize(name)
-    @name = name
-    @guesses =[]
-  end
-
-  # returns 'nil' if guess is already in the set
-  def new_guess(guess)
-    unless @guesses.include?(guess)
-      @guesses << guess.upcase
-    else
-      raise "You already guessed that letter"
+  class Word
+    attr_reader :word, :masked_word
+    def initialize(dictionary)
+      @word = random(dictionary).upcase.split('')
+      @masked_word = []
+      update_masked_word
     end
-  end
-end
-
-class Word
-  attr_reader :word, :masked_word
-  def initialize(dictionary)
-    @word = random(dictionary).upcase.split('')
-    @masked_word = []
-    update_masked_word
-  end
   
-  def update_masked_word(guesses=[])
-    old = @masked_word
-    @masked_word = []
-    @word.each do |letter|
-      guesses.include?(letter) ? @masked_word << letter : @masked_word <<  '_'
+    ## try implementing with .gsub or similar
+    def masked_word=(guesses=[])
+      ## each letter .gsub('_') if not in guesses
     end
-    return old != @masked_word
-  end
   
-  def show
-    @masked_word.join(' ')
-  end
+    def masked_word
+      
+    end
   
-  private
-  def random(dictionary)
-    dictionary[rand(0...dictionary.length)]
+    private
+    def random(dictionary)
+      dictionary[rand(0...dictionary.length)]
+    end
   end
 end
 
