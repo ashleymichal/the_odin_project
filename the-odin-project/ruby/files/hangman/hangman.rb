@@ -9,53 +9,118 @@
 # [   ] Now implement the functionality where, at the start of any turn, instead of making a guess the player should also have the option to save the game. Remember what you learned about serializing objects... you can serialize your game class too!
 # [   ] When the program first loads, add in an option that allows you to open one of your saved games, which should jump you exactly back to where you were when you saved. Play on!
 
-# display count of remaining guesses
-# display current state of secret_word
-# player makes a guess
-  # show if guess was correct or incorrect
-  # if there are no remaining guesses, the player loses
-
 class Hangman
-  attr_reader :secret_word, :player, :remaining_guesses
+  attr_reader :secret_word
+  attr_accessor :remaining_guesses, :guesses
   def initialize
-    @dictionary = Dictionary.new("5desk.txt", 5, 12)
+    @dictionary = Dictionary.new("5desk.txt")
     @secret_word = Word.new(@dictionary)
+    @guesses = []
     @remaining_guesses = 12
   end
   
-  class Dictionary
-    def initialize(dictionary_file, min_length, max_length)
-      dictionary = File.readlines(dictionary_file)
-      dictionary.each do |word|
-        word.strip!
-      end
-      @dictionary = dictionary.select { |word| word.length.between?(min_length,max_length) }
+  def game
+    # give option to load gamefile
+    # repeat turns until game is over
+    until game_over
+      turn
     end
-  end 
+  end
+  
+  def game_over
+    @remaining_guesses == 0
+  end
+  
+  def victory
+    @secret_word.masked_word == @secret_word.word
+  end
+  
+  def turn
+    display_status
+    input = get_player_input
+    # if input == 'save'    # TODO coerce...
+    #   # TODO get filename from player(?) AND/OR make default filename
+    #   gamefile = Gamefile.new(filename)
+    #   gamefile.save
+    # else
+    new_guess = Guess.new(input)
+    @guesses << new_guess
+    @secret_word.masked_word=(@guesses)
+    # end
+  end
+  
+  def display_status
+    puts "You have #{@remaining_guesses} guesses remaining"
+    puts "Already guessed:    #{@guesses}"
+    puts "Secret word so far: #{@secret_word.masked_word}"
+  end
+  
+  def get_player_input
+    # TODO
+    # - validate input
+  end
 
   class Word
-    attr_reader :word, :masked_word
+    attr_reader :masked_word
     def initialize(dictionary)
-      @word = random(dictionary).upcase.split('')
+      @word = dictionary.random
       @masked_word = []
-      update_masked_word
     end
   
     ## try implementing with .gsub or similar
     def masked_word=(guesses=[])
       ## each letter .gsub('_') if not in guesses
     end
+    
+    def word
+      @word.upcase.split('')
+    end
+  end
   
-    def masked_word
+  class Guess
+    def initialize(input)
+    end
+    
+    def str #(?)
+    end
+  end
+
+  ## TODO build GameFile class methods
+  class GameFile
+    def initialize(filename)
+      @filename = filename
+      ## set directory; class variable?
+    end
+    
+    def save
+      ## save game to file
       
     end
   
-    private
-    def random(dictionary)
-      dictionary[rand(0...dictionary.length)]
+    def load
+      ## load game from file
     end
   end
+  
+  class Dictionary
+    def initialize(dictionary_file)
+      MIN_LENGTH = 5
+      MAX_LENGTH = 12
+      @dictionary = load(dictionary_file, MIN_LENGTH, MAX_LENGTH)
+    end
+    
+    def choose_random
+      dictionary[rand(0...dictionary.length)]
+    end
+    
+    private
+    def load(filename, min_length, max_length)
+      dictionary = File.readlines(dictionary_file)
+      dictionary.each do |word|
+        word.strip!
+      end
+      dictionary.select { |word| word.length.between?(min_length,max_length) }
+    end
+  end 
+  
 end
-
-new_game = Hangman.new
-new_game.play
