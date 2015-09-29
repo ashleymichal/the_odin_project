@@ -9,6 +9,27 @@ class Hangman
   def remaining_guesses(count)
     puts "You have #{count} guesses left."
   end
+  
+  def get_player_input
+    begin
+      puts "Enter a letter, or the word 'save' if you want to save your game"
+      validate_player_input(gets.chomp.downcase)
+    rescue
+      puts $!
+      retry
+    end
+  end
+  
+  def validate_player_input(input)
+    # input must either be the word 'save' or a single alphabet character
+    if input == 'save'
+      puts "save game"
+    elsif input.match(/[a-z]/) && input.length == 1
+      @secret_word.guesses=(input)
+    else
+      raise "Invalid entry."
+    end
+  end
 
   class Dictionary
     attr_reader :wordlist
@@ -34,7 +55,7 @@ class Hangman
   end
 
   class SecretWord
-    attr_reader :word
+    attr_reader :word, :guesses
     def initialize(word)
       @word = word
       @guesses = []
@@ -51,7 +72,6 @@ class Hangman
     def guesses=(guess)
       @guesses << guess
     end
-  
   end
   
 end
@@ -61,7 +81,6 @@ end
 min_length = 5
 max_length = 12
 dictionary_filename = "5desk.txt"
-
 
 new_game = Hangman.new(dictionary_filename)
 puts "Loading dictionary"
@@ -77,3 +96,7 @@ puts "You have #{count} incorrect guesses left."
 
 # display word guesses
 puts "Here is the random word displayed #{secret_word.display}"
+
+# Take player guess
+new_game.get_player_input
+puts "all guesses: #{secret_word.guesses.join(' ')}"
