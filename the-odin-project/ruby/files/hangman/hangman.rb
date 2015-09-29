@@ -44,13 +44,14 @@ class Hangman
 
     play
   end
-
+  
+  private
   def play
     until count == 0
       @guess_log.remaining_guesses(@count)
       puts "TESTING: #{@secret_word.word}"
       puts "#{@secret_word.masked_word}"
-        # check if the word is complete, if yes player wins
+      break if @secret_word.complete?
       puts @guess_log.guesses.join(' ')
       input = get_player_input
       if input == 'save' 
@@ -61,7 +62,11 @@ class Hangman
         @count -= 1 unless @secret_word.guess_in_word?(input)
       end
     end
-    puts 'count reduced to 0. you lose.'
+    if @secret_word.complete?
+      puts "You win!"
+    else
+      puts "Out of turns."
+    end
   end
 
   def player_guess(input)
