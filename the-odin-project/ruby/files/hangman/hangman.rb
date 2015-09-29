@@ -1,13 +1,10 @@
 class Hangman
-  attr_reader :count, :dictionary, :secret_word
+  attr_reader :count, :dictionary, :secret_word, :guess_log
   def initialize(dictionary_filename)
     @count = 12
     @dictionary = Dictionary.new(5, 12, dictionary_filename)
     @secret_word = SecretWord.new(@dictionary.random)
-  end
-
-  def remaining_guesses(count)
-    puts "You have #{count} guesses left."
+    @guess_log = GuessLog.new(@secret_word.word)
   end
   
   def get_player_input
@@ -25,9 +22,49 @@ class Hangman
     if input == 'save'
       puts "save game"
     elsif input.match(/[a-z]/) && input.length == 1
-      @secret_word.guesses=(input)
+      @guess_log.guesses=(input)
+      @count -= 1 if @guess_log.guess_in_word?(input)
     else
       raise "Invalid entry."
+    end
+  end
+  
+  class GuessLog
+    attr_reader :guesses
+    def initialize(secret_word)
+      @guesses = []
+      @secret_word = secret_word
+    end
+  
+    def guesses=(guess)
+      @guesses << guess
+    end
+    
+    def guess_in_word?(guess)
+      @secret_word.include?(guess)
+    end
+    
+    def already_guessed?(guess)
+      @guesses.include?(guess)
+    end
+
+    def remaining_guesses(count)
+      puts "You have #{@guesses.length} guesses left."
+    end
+  end
+
+  class SecretWord
+    attr_reader :word
+    def initialize(word)
+      @word = word.split('')
+    end
+
+    def display(guesses)
+      masked_word = []
+      @word.each do |letter|
+        masked_word << (guesses.include?(letter) ? letter : '_')
+      end
+      masked_word.join(' ')
     end
   end
 
@@ -53,27 +90,6 @@ class Hangman
       @wordlist[rand(0...@wordlist.length)]
     end
   end
-
-  class SecretWord
-    attr_reader :word, :guesses
-    def initialize(word)
-      @word = word
-      @guesses = []
-    end
-
-    def display
-      masked_word = []
-      @word.split('').each do |letter|
-        masked_word << (@guesses.include?(letter) ? letter : '_')
-      end
-      masked_word.join(' ')
-    end
-  
-    def guesses=(guess)
-      @guesses << guess
-    end
-  end
-  
 end
 
 ## TESTS
@@ -94,9 +110,12 @@ puts "Here is a random word: #{secret_word.word}"
 count = new_game.count
 puts "You have #{count} incorrect guesses left."
 
-# display word guesses
-puts "Here is the random word displayed #{secret_word.display}"
-
 # Take player guess
 new_game.get_player_input
-puts "all guesses: #{secret_word.guesses.join(' ')}"
+guesses = new_game.guess_log.guesses
+puts "all guesses: #{guesses.join(' ')}"
+
+# Evaluate guess right-ness
+
+# display word guesses
+puts "Here is the random word displayed #{secret_word.display(guesses)}"
