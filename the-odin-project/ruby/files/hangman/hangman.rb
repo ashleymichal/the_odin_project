@@ -1,38 +1,57 @@
-class Dictionary
-  attr_reader :wordlist
-  def initialize(min_length, max_length, filename)
-    @wordlist = filter(min_length, max_length, load(filename))
+class Hangman
+  attr_reader :count, :dictionary, :secret_word
+  def initialize(dictionary_filename)
+    @count = 12
+    @dictionary = Dictionary.new(5, 12, dictionary_filename)
+    @secret_word = SecretWord.new(@dictionary.random)
   end
-  
-  def load(filename)
-    dictionary = File.readlines(filename)
-    dictionary.each do |word|
-      word.strip!
+
+  def remaining_guesses(count)
+    puts "You have #{count} guesses left."
+  end
+
+  class Dictionary
+    attr_reader :wordlist
+    def initialize(min_length, max_length, filename)
+      @wordlist = filter(min_length, max_length, load(filename))
     end
-    dictionary
-  end
   
-  def filter(min_length, max_length, dictionary)
-    dictionary.select { |word| word.length.between?(min_length, max_length) }
-  end
+    def load(filename)
+      dictionary = File.readlines(filename)
+      dictionary.each do |word|
+        word.strip!
+      end
+      dictionary
+    end
   
-  def random
-    @wordlist[rand(0...@wordlist.length)]
-  end
-end
-
-def remaining_guesses(count)
-  puts "You have #{count} guesses left."
-end
-
-class SecretWord
-  def initialize(word)
-    @word = word
-    @guesses = []
+    def filter(min_length, max_length, dictionary)
+      dictionary.select { |word| word.length.between?(min_length, max_length) }
+    end
+  
+    def random
+      @wordlist[rand(0...@wordlist.length)]
+    end
   end
 
-  def display
-    
+  class SecretWord
+    attr_reader :word
+    def initialize(word)
+      @word = word
+      @guesses = []
+    end
+
+    def display
+      masked_word = []
+      @word.split('').each do |letter|
+        masked_word << (@guesses.include?(letter) ? letter : '_')
+      end
+      masked_word.join(' ')
+    end
+  
+    def guesses=(guess)
+      @guesses << guess
+    end
+  
   end
   
 end
@@ -43,16 +62,18 @@ min_length = 5
 max_length = 12
 dictionary_filename = "5desk.txt"
 
+
+new_game = Hangman.new(dictionary_filename)
 puts "Loading dictionary"
-dictionary = Dictionary.new(min_length, max_length, dictionary_filename)
-puts "Dictionary contains #{dictionary.wordlist.length} words."
+puts "Dictionary contains #{new_game.dictionary.wordlist.length} words."
 
 # randomly select a word
-random_word = dictionary.random
-puts "Here is a random word: #{random_word}"
+secret_word = new_game.secret_word
+puts "Here is a random word: #{secret_word.word}"
 
 # display count for remaining incorrect guesses
-count = 12
-remaining_guesses(count)
+count = new_game.count
+puts "You have #{count} incorrect guesses left."
 
 # display word guesses
+puts "Here is the random word displayed #{secret_word.display}"
