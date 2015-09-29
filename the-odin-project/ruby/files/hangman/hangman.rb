@@ -7,10 +7,35 @@ class Hangman
     @guess_log = GuessLog.new(@secret_word.word)
   end
   
+  def turn
+    # while count > 0
+      # display count
+      # display masked word
+      # check if the word is complete, if yes player wins
+      # display incorrect letters
+      # ask player to save_game OR make a guess; get_player_input
+      # if save
+        # save game. 
+      # else 
+        # evaluate guess
+        # update count, masked word, guesses
+        # @count -= 1 if @guess_log.guess_in_word?(input)
+      # end
+    # 
+  end
+  
+  def player_guess(input)
+    @guess_log.guesses=(input)
+  end
+  
+  def save_game
+    
+  end
+  
   def get_player_input
     begin
       puts "Enter a letter, or the word 'save' if you want to save your game"
-      validate_player_input(gets.chomp.downcase)
+      input = validate_player_input(gets.chomp.downcase)
     rescue
       puts $!
       retry
@@ -19,14 +44,8 @@ class Hangman
   
   def validate_player_input(input)
     # input must either be the word 'save' or a single alphabet character
-    if input == 'save'
-      puts "save game"
-    elsif input.match(/[a-z]/) && input.length == 1
-      @guess_log.guesses=(input)
-      @count -= 1 if @guess_log.guess_in_word?(input)
-    else
-      raise "Invalid entry."
-    end
+    raise "Invalid entry." unless input == 'save' || /[a-z]{1}/ =~ input
+    return input
   end
   
   class GuessLog
@@ -54,17 +73,22 @@ class Hangman
   end
 
   class SecretWord
-    attr_reader :word
+    attr_reader :word, :masked_word
     def initialize(word)
       @word = word.split('')
+      @masked_word = []
     end
 
-    def display(guesses)
-      masked_word = []
+    def masked_word=(guesses)
+      @masked_word = []
       @word.each do |letter|
-        masked_word << (guesses.include?(letter) ? letter : '_')
+        @masked_word << (guesses.include?(letter) ? letter : '_')
       end
       masked_word.join(' ')
+    end
+    
+    def complete?
+      @masked_word == @word
     end
   end
 
@@ -90,6 +114,7 @@ class Hangman
       @wordlist[rand(0...@wordlist.length)]
     end
   end
+  
 end
 
 ## TESTS
@@ -118,4 +143,7 @@ puts "all guesses: #{guesses.join(' ')}"
 # Evaluate guess right-ness
 
 # display word guesses
-puts "Here is the random word displayed #{secret_word.display(guesses)}"
+puts "Here is the random word displayed #{secret_word.masked_word=(guesses)}"
+
+## GAMEPLAY
+# Ask player to load_game or start new_game
