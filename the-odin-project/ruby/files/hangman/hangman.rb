@@ -58,7 +58,7 @@ class Hangman
         next
       else
         player_guess(input)
-        @count -= 1 if @secret_word.guess_in_word?(input)
+        @count -= 1 unless @secret_word.guess_in_word?(input)
       end
     end
     puts 'count reduced to 0. you lose.'
@@ -82,6 +82,7 @@ class Hangman
   def validate_player_input(input)
     # input must either be the word 'save' or a single alphabet character
     raise "Invalid entry." unless input == 'save' || /^[a-z]{1}$/ =~ input
+    raise "You already guessed that letter" if @guess_log.already_guessed?(input)
     return input
   end
 
