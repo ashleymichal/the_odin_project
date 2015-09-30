@@ -5,7 +5,7 @@ class Hangman
   def initialize(word, guess_log=GuessLog.new, count=12)
     @count = count
     @guess_log = guess_log
-    @secret_word = SecretWord.new(word.downcase, @guess_log.guesses)
+    @secret_word = SecretWord.new(word.downcase)
     play
   end
   
@@ -14,6 +14,7 @@ class Hangman
     until count == 0
       @guess_log.remaining_guesses(@count)
       puts "TESTING: #{@secret_word.word}"
+      @secret_word.masked_word=(@guess_log.guesses)
       puts "#{@secret_word.masked_word}"
       break if @secret_word.complete?
       puts @guess_log.guesses.join(' ')
@@ -77,14 +78,9 @@ class Hangman
 
   class SecretWord
     attr_reader :word, :masked_word
-    def initialize(word, guesses)
+    def initialize(word)
       @word = word.split('')
       @masked_word = []
-      masked_word=(guesses)
-    end
-    
-    def masked_word
-      @masked_word.join(' ')
     end
 
     def masked_word=(guesses)
@@ -92,6 +88,10 @@ class Hangman
       @word.each do |letter|
         @masked_word << (guesses.include?(letter) ? letter : '_')
       end
+    end
+    
+    def masked_word
+      @masked_word.join(' ')
     end
   
     def guess_in_word?(guess)
