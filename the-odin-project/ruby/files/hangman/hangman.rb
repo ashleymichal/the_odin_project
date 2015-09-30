@@ -1,47 +1,11 @@
-class GameFile
-  def initialize(filename)
-    
-  end
-  
-  def save
-  
-  end
-
-  def load
-  
-  end
-end
-
-class Dictionary
-  attr_reader :wordlist
-  def initialize(min_length, max_length, filename)
-    @wordlist = filter(min_length, max_length, load(filename))
-  end
-
-  def load(filename)
-    dictionary = File.readlines(filename)
-    dictionary.each do |word|
-      word.strip!
-    end
-    dictionary
-  end
-
-  def filter(min_length, max_length, dictionary)
-    dictionary.select { |word| word.length.between?(min_length, max_length) }
-  end
-
-  def random
-    @wordlist[rand(0...@wordlist.length)]
-  end
-end
+require 'yaml'
 
 class Hangman
   attr_reader :count, :dictionary, :secret_word, :guess_log
-  def initialize(word)
-    @count = 12
-    @guess_log = GuessLog.new
+  def initialize(word, guess_log=GuessLog.new, count=12)
+    @count = count
+    @guess_log = guess_log
     @secret_word = SecretWord.new(word.downcase, @guess_log.guesses)
-
     play
   end
   
@@ -55,7 +19,8 @@ class Hangman
       puts @guess_log.guesses.join(' ')
       input = get_player_input
       if input == 'save' 
-        puts 'save game'
+        gamefile = GameFile.new
+        gamefile.save(@secret_word.word.join, @guess_log, @count)
         next
       else
         player_guess(input)
@@ -140,6 +105,50 @@ class Hangman
 
 end
 
+class Dictionary
+  attr_reader :wordlist
+  def initialize(min_length, max_length, filename)
+    @wordlist = filter(min_length, max_length, load(filename))
+  end
+
+  def load(filename)
+    dictionary = File.readlines(filename)
+    dictionary.each do |word|
+      word.strip!
+    end
+    dictionary
+  end
+
+  def filter(min_length, max_length, dictionary)
+    dictionary.select { |word| word.length.between?(min_length, max_length) }
+  end
+
+  def random
+    @wordlist[rand(0...@wordlist.length)]
+  end
+end
+
+class GameFile
+  def initialize(filename='gamefile.yaml')
+    @filename = filename
+  end
+
+  def save(secret_word, guess_log, count)
+    yaml = YAML::dump({:secret_word => secret_word, :guess_log => guess_log, :count => count})
+    File.open(@filename, 'w') do |file|
+      file.write(yaml)
+    end
+  end
+
+  def load
+    game_file = open(@filename, 'r')
+    yaml = game_file.read
+    YAML::load(yaml)
+  end
+end
+
+
+
 ## TESTS
 # load dictionary, filter to words between 5-12 chars long
 min_length = 5
@@ -147,27 +156,15 @@ max_length = 12
 dictionary_filename = "5desk.txt"
 
 dictionary = Dictionary.new(5, 12, dictionary_filename)
-new_game = Hangman.new(dictionary.random)
-# puts "Loading dictionary"
-# puts "Dictionary contains #{new_game.dictionary.wordlist.length} words."
-#
-# # randomly select a word
-# secret_word = new_game.secret_word
-# puts "Here is a random word: #{secret_word.word}"
-#
-# # display count for remaining incorrect guesses
-# count = new_game.count
-# puts "You have #{count} incorrect guesses left."
-#
-# # Take player guess
-# new_game.get_player_input
-# guesses = new_game.guess_log.guesses
-# puts "all guesses: #{guesses.join(' ')}"
-#
-# # Evaluate guess right-ness
-#
-# # display word guesses
-# puts "Here is the random word displayed #{secret_word.masked_word=(guesses)}"
-#
-# ## GAMEPLAY
-# # Ask player to load_game or start new_game
+game_file = GameFile.new
+yaml = game_file.load
+#new_game = Hangman.new(dictionary.random)
+new_game = Hangman.new(yaml[:secret_word], yaml[:guess_log], yaml[:count])
+
+
+## TODO
+# 1. get gamefile information from gamefile directory
+# 2. ask player to choose gamefile or start new game
+# => assert maximum of 3 gamefiles in directory
+# 3. load gamefile
+# 4. At start of turn, give option to save new gamefile
