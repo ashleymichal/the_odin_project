@@ -11,6 +11,7 @@ class Hangman
   
   private
   def play
+    puts 'You may save or quit anytime by entering the word "save" or "quit"'
     until count == 0
       @guess_log.remaining_guesses(@count)
       puts "TESTING: #{@secret_word.word}"
@@ -19,7 +20,10 @@ class Hangman
       break if @secret_word.complete?
       puts @guess_log.guesses.join(' ')
       input = get_player_input
-      if input == 'save' 
+      case input
+      when 'quit'
+        exit
+      when 'save' 
         gamefile = GameFile.new
         gamefile.save(@secret_word.word.join, @guess_log, @count)
         next
@@ -42,7 +46,6 @@ class Hangman
 
   def get_player_input
     begin
-      puts "Enter a letter, or the word 'save' if you want to save your game"
       input = validate_player_input(gets.chomp.downcase)
     rescue
       puts $!
@@ -52,7 +55,7 @@ class Hangman
 
   def validate_player_input(input)
     # input must either be the word 'save' or a single alphabet character
-    raise "Invalid entry." unless input == 'save' || /^[a-z]{1}$/ =~ input
+    raise "Invalid entry." unless input == 'save' || input == 'quit' || /^[a-z]{1}$/ =~ input
     raise "You already guessed that letter" if @guess_log.already_guessed?(input)
     return input
   end
@@ -147,19 +150,32 @@ class GameFile
   end
 end
 
+def new_game
+  # Load Dictionary from File
+  min_length = 5
+  max_length = 12
+  dictionary_filename = "5desk.txt"
+  dictionary = Dictionary.new(5, 12, dictionary_filename)
+  game_file = GameFile.new
+  begin
+    puts "Would you like to start a NEW game or LOAD your last game?"
+    game = gets.chomp.upcase
+    case game
+    when 'LOAD'
+      yaml = game_file.load
+      new_game = Hangman.new(yaml[:secret_word], yaml[:guess_log], yaml[:count])
+    when 'NEW'
+      new_game = Hangman.new(dictionary.random)
+    else
+      raise 'Please respond with either LOAD or NEW'
+    end
+  rescue
+    puts $!
+    retry
+  end
+end
 
-
-## TESTS
-# load dictionary, filter to words between 5-12 chars long
-min_length = 5
-max_length = 12
-dictionary_filename = "5desk.txt"
-
-dictionary = Dictionary.new(5, 12, dictionary_filename)
-game_file = GameFile.new
-yaml = game_file.load
-#new_game = Hangman.new(dictionary.random)
-new_game = Hangman.new(yaml[:secret_word], yaml[:guess_log], yaml[:count])
+new_game
 
 
 ## TODO
