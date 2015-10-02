@@ -21,8 +21,16 @@ end
 loop {
   client = server.accept
   request = client.gets
-  header = request.split(" ")
-  client.puts response(header[1]) if header[0] == 'GET'
+  header,body = request.split("\r\n\r\n")
+  type,path,version = header.split(" ")[0..3]
+  case type
+  when 'GET'
+    client.puts response(path)
+  when 'POST'
+    client.puts "Received POST request"
+  else
+    client.puts "Unrecognized request"
+  end
   client.puts "Closing the connection. Bye!"
   client.close
 }
