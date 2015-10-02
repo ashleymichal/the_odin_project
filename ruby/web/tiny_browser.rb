@@ -9,8 +9,7 @@ $path = "/Users/ashleymichal/Sites/the_odin_project/ruby/web/index.html"        
 
 def build_request(type, info=nil)
   request = "#{type} #{$path} HTTP/1.0\r\n\r\n"
-  return request + info unless info.nil?
-  request
+  request + info unless info.nil?
 end
 
 def make_request(request)
@@ -26,7 +25,7 @@ def make_request(request)
   when '404'
     return "#{status} - #{message}"
   else
-    return response
+    return body
   end
 end
 
@@ -37,6 +36,7 @@ def get_post_info
   print "Email: "
   email = gets.chomp
   viking = { :viking => { :name => name, :email => email } }
+  puts viking.to_json
   return viking.to_json
 end
 

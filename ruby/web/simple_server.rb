@@ -27,7 +27,7 @@ loop {
   when 'GET'
     client.puts response(path)
   when 'POST'
-    client.puts "Received POST request"
+    client.puts header
   else
     client.puts "Unrecognized request"
   end
