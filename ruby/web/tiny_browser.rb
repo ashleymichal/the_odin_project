@@ -1,4 +1,5 @@
 require 'socket'
+require 'json'
 
 $host = 'localhost'                      # The web server
 $port = 2000                             # Default HTTP port
@@ -30,8 +31,13 @@ def make_request(request)
 end
 
 def get_post_info
-  puts "then you would get post info"
-  return nil
+  puts "Welcome, Viking! Please enter your Raid Registration Information"
+  print "Name:  "
+  name = gets.chomp
+  print "Email: "
+  email = gets.chomp
+  viking = { :viking => { :name => name, :email => email } }
+  return viking.to_json
 end
 
 loop {
