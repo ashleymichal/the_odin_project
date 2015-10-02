@@ -12,17 +12,14 @@ def response(address)
   rescue
     status = '404'
     message = 'File Not Found'
-    page = "#{$!}"
   end
-  response = "HTTP/1.0 #{status} #{message}
-             "
-  return response + page
+  response = "HTTP/1.0 #{status} #{message}\r\n\r\n"
+  response + page unless page.nil?
 end
   
 
 loop {
   client = server.accept
-  client.puts(Time.now.ctime)
   request = client.gets
   header = request.split(" ")
   client.puts response(header[1]) if header[0] == 'GET'
