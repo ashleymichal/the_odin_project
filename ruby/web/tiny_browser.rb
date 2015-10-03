@@ -1,22 +1,25 @@
 require 'socket'
 
-host = 'localhost'                      # The web server
-port = 2000                             # Default HTTP port
-path = "/Users/ashleymichal/Sites/the_odin_project/ruby/web/index.html"                    # The file we want
+$host = 'localhost'                      # The web server
+$port = 2000                             # Default HTTP port
+$path = "/Users/ashleymichal/Sites/the_odin_project/ruby/web/index.html"                    # The file we want
 
 # This is the HTTP request we send to fetch a file
-request = "GET #{path} HTTP/1.0\r\n\r\n"
+# request = "GET #{$path} HTTP/1.0\r\n\r\n"
 
-def build_request(type, info=nil)
-  request = "#{type} #{$path} HTTP/1.0\r\n\r\n"
-  request + info unless info.nil?
+def build_request(type, info="")
+  request = "#{type} #{$path} HTTP/1.0\r\n\r\n" + info
+  request
 end
 
 def make_request(request)
-  socket = TCPSocket.open($host,$port)      # Connect to server
+  socket = TCPSocket.open($host,$port)    # Connect to server
   socket.print(request)                   # Send request
-  response = socket.read                  # Read complete response
+  return socket.read                    # Read complete response
+end
+
   # Split response at first blank line into headers and body
+def render_response(response)
   headers,body = response.split("\r\n\r\n", 2)
   http,status,message = headers.split(" ", 3)
   case status
@@ -47,6 +50,7 @@ loop {
       post_info = get_post_info
       request = build_request(type, post_info)
       response = make_request(request)
+      render_response(response)
       puts response
     when 'Q'
       exit
