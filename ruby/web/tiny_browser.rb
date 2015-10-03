@@ -23,7 +23,7 @@ def render_response(response)
   http,status,message = headers.split(" ", 3)
   case status
   when '200'
-    return body                            # And display it
+    return body.                          # And display it
   when '404'
     return "#{status} - #{message}"
   else
@@ -46,12 +46,12 @@ loop {
       page = render_response(response)
       puts page
     when 'POST'
-      request = "#{type} #{$path} HTTP/1.0\r\n\r\n"
+      request = "#{type} #{$path} HTTP/1.0\r\n\r\nshenanigans\n"
       response = make_request(request)
       puts response
-      puts "making new request"
-      new_response = make_request("shenanigans\n")
-      puts new_response
+      # puts "making new request"
+      # new_response = make_request("shenanigans\n")
+      # puts new_response
     when 'Q'
       exit
     else
