@@ -1,5 +1,4 @@
 require 'socket'
-require 'json'
 
 host = 'localhost'                      # The web server
 port = 2000                             # Default HTTP port
@@ -8,7 +7,6 @@ path = "/Users/ashleymichal/Sites/the_odin_project/ruby/web/index.html"         
 # This is the HTTP request we send to fetch a file
 request = "GET #{path} HTTP/1.0\r\n\r\n"
 
-<<<<<<< HEAD
 def build_request(type, info=nil)
   request = "#{type} #{$path} HTTP/1.0\r\n\r\n"
   request + info unless info.nil?
@@ -32,14 +30,8 @@ def make_request(request)
 end
 
 def get_post_info
-  puts "Welcome, Viking! Please enter your Raid Registration Information"
-  print "Name:  "
-  name = gets.chomp
-  print "Email: "
-  email = gets.chomp
-  viking = { :viking => { :name => name, :email => email } }
-  puts viking.to_json
-  return viking.to_json
+  puts "then you would get post info"
+  return nil
 end
 
 loop {
@@ -66,7 +58,7 @@ loop {
     retry
   end
 }
-=======
+
 socket = TCPSocket.open(host,port)      # Connect to server
 socket.print(request)                   # Send request
 response = socket.read                  # Read complete response
@@ -79,4 +71,3 @@ when '200'
 else
   puts "#{status} - #{message}"
 end
->>>>>>> parent of c98c188... stage two: adding support for POST requests
