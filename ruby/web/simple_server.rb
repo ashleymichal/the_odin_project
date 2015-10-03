@@ -21,9 +21,15 @@ end
 loop {
   client = server.accept
   request = client.gets
-  header,body = request.split("\r\n\r\n")
-  header = header.split(" ")
-  client.puts response(header[1]) if header[0] == 'GET'
+  client.puts request
+  # header,body = request.split("\r\n\r\n")
+  # header = header.split(" ")
+  # case header[0]
+  # when 'GET'
+  #   client.puts response(header[1]) + body.to_s
+  # when 'POST'
+  #   client.puts request
+  # end 
   client.puts "Closing the connection. Bye!"
   client.close
 }

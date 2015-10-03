@@ -8,14 +8,13 @@ $path = "/Users/ashleymichal/Sites/the_odin_project/ruby/web/index.html"        
 # request = "GET #{$path} HTTP/1.0\r\n\r\n"
 
 def build_request(type, info="")
-  request = "#{type} #{$path} HTTP/1.0\r\n\r\n" + info
-  request
+  request = "#{type} #{$path} HTTP/1.0\r\n\r\nshenanigans"
 end
 
 def make_request(request)
   socket = TCPSocket.open($host,$port)    # Connect to server
   socket.print(request)                   # Send request
-  return socket.read                    # Read complete response
+  return socket.read                      # Read complete response
 end
 
   # Split response at first blank line into headers and body
@@ -33,8 +32,7 @@ def render_response(response)
 end
 
 def get_post_info
-  puts "then you would get post info"
-  return nil
+  return "POST"
 end
 
 loop {
@@ -48,11 +46,12 @@ loop {
       page = render_response(response)
       puts page
     when 'POST'
-      post_info = get_post_info
-      request = build_request(type, post_info)
+      request = "#{type} #{$path} HTTP/1.0\r\n\r\n"
       response = make_request(request)
-      page = render_response(response)
       puts response
+      puts "making new request"
+      new_response = make_request("shenanigans\n")
+      puts new_response
     when 'Q'
       exit
     else
