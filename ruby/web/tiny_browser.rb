@@ -44,13 +44,14 @@ loop {
     case type
     when 'GET'
       request = build_request(type)
-      page = make_request(request)
+      response = make_request(request)
+      page = render_response(response)
       puts page
     when 'POST'
       post_info = get_post_info
       request = build_request(type, post_info)
       response = make_request(request)
-      render_response(response)
+      page = render_response(response)
       puts response
     when 'Q'
       exit
