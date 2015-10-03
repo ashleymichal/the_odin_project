@@ -1,14 +1,13 @@
 require 'socket'
+require '/httparse'
 
 $host = 'localhost'                      # The web server
 $port = 2000                             # Default HTTP port
 $path = "/Users/ashleymichal/Sites/the_odin_project/ruby/web/index.html"                    # The file we want
 
-# This is the HTTP request we send to fetch a file
-# request = "GET #{$path} HTTP/1.0\r\n\r\n"
-
+# takes the request
 def build_request(type, info="")
-  request = "#{type} #{$path} HTTP/1.0\r\n\r\nshenanigans"
+  request = "#{type} #{$path} HTTP/1.0\r\n\r\n"
 end
 
 def make_request(request)
@@ -17,7 +16,6 @@ def make_request(request)
   return socket.read                      # Read complete response
 end
 
-  # Split response at first blank line into headers and body
 def render_response(response)
   headers,body = response.split("\r\n\r\n", 2)
   http,status,message = headers.split(" ", 3)

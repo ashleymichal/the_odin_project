@@ -1,4 +1,5 @@
 require 'socket'
+require '/httparse'
 
 server = TCPServer.open(2000)
 
