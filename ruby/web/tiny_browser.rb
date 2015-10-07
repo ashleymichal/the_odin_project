@@ -3,30 +3,24 @@ require '/httparse'
 
 $host = 'localhost'                      # The web server
 $port = 2000                             # Default HTTP port
-$path = "/Users/ashleymichal/Sites/the_odin_project/ruby/web/index.html"                    # The file we want
+$path = "/Users/ashleymichal/Sites/the_odin_project/ruby/web/index.html"
 
-# takes the request
-def build_request(type, info="")
-  request = "#{type} #{$path} HTTP/1.0\r\n\r\n"
+def build_request(type, path, content="")
+  # determine content_type, content_length
+  request = "#{type} #{path} HTTP/1.0\n\
+            From: #{user_email}\n\
+            User-Agent: HTTPTool/1.0\n\
+            Content-Type: #{content_type}\n\
+            Content-Length: #{content_length}\r\n\r\n\
+            \
+            #{content}\n"
+  return request
 end
 
 def make_request(request)
-  socket = TCPSocket.open($host,$port)    # Connect to server
-  socket.print(request)                   # Send request
-  return socket.read                      # Read complete response
-end
-
-def render_response(response)
-  headers,body = response.split("\r\n\r\n", 2)
-  http,status,message = headers.split(" ", 3)
-  case status
-  when '200'
-    return body.                          # And display it
-  when '404'
-    return "#{status} - #{message}"
-  else
-    return body
-  end
+  socket = TCPSocket.open($host,$port)   # Connect to server
+  socket.print(request)                  # Send request
+  return socket.read                     # Read complete response
 end
 
 def get_post_info
@@ -38,18 +32,11 @@ loop {
     print "Is this a GET or POST request?  "
     type = gets.chomp.upcase
     case type
-    when 'GET'
-      request = build_request(type)
+    when 'GET', 'POST'
+      request = build_request(type, $path)
       response = make_request(request)
       page = render_response(response)
       puts page
-    when 'POST'
-      request = "#{type} #{$path} HTTP/1.0\r\n\r\nshenanigans\n"
-      response = make_request(request)
-      puts response
-      # puts "making new request"
-      # new_response = make_request("shenanigans\n")
-      # puts new_response
     when 'Q'
       exit
     else
