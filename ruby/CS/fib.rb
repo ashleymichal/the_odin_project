@@ -23,12 +23,3 @@ def fibs_seq(n, sequence = [])
 	sequence.unshift(fibs_rec(n))
 	return fibs_seq(n-1, sequence)
 end
-
-def merge_sort(list1, list2, sorted_list = [])
-	## BASE CASES
-	# if either list is empty, append the other list to sorted_list
-
-	# compare 0th element of each list and unshift that element onto sorted
-	smallest = (list1[0] < list2[0]) ? list1.shift : list2.shift
-	sorted << smallest
-end
