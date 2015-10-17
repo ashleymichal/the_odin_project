@@ -1,49 +1,39 @@
 class BinarySearchTree
 	attr_reader :root
-	attr_accessor :last_node
 
-	def initialize
-		@root = nil
+	# takes an array of data and turns it into a binary tree full of Node objects
+	# assumes data_set is sorted
+	def build_tree data_set, parent=nil
+		case data_set.length
+		when 0
+			return nil
+		when 1
+			# puts "Data set is 1 element"
+			# puts "New node created: #{data_set[0]}"
+			return Node.new(data_set[0], parent)
+		else
+			middle = data_set.length / 2
+			# puts "Data set is #{data_set.length} elements"
+			# puts "The center element is #{data_set[middle]}"
+			current_node = Node.new(data_set[middle], parent)
+			# puts "New node created: #{current_node.value}"
+			@root = current_node if parent.nil?
+			current_node.left_child=(build_tree(data_set[0...middle], current_node))
+			current_node.right_child=(build_tree(data_set[middle+1..-1], current_node))
+		end
 	end
 
 	class Node
-		attr_reader :value#, :child_nodes
-		attr_accessor :parent, :child_nodes
-		def initialize(value, parent_node=nil, child_nodes=nil)
-			@value = value								# the value of this Node
-			@parent_node = parent_node		# parent Node object
-			@child_nodes = child_nodes		# array of other Node objects
-		end
+		attr_reader :value, :parent
+		attr_accessor :left_child, :right_child
 
-		# def child_nodes=(child_node)
-		# 	case child_node.value
-		# 	when < @value
-		# 		@child_nodes[:left] = child_node
-		# 	when > @value
-		# 		@child_nodes[:right] = child_node
-		# 	end
-		# end
-	end
-
-	def build_tree(array)
-		# turn array into binary tree full of Node objects
-		@root = Node.new(array.shift)
-		@last_node = @root
-		array.each do |element|
-			next_node = Node.new(element, @last_node)
-			@last_node.child_nodes=(next_node)
-			@last_node = next_node
+		def initialize value, parent
+			@value = value
+			@parent = parent
 		end
 	end
 end
 
-new_tree = BinarySearchTree.new
-array = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324].sort
-new_tree.build_tree(array)
-
-current_node = new_tree.root
-puts current_node.value
-until current_node.child_nodes.nil?
-	puts current_node.child_nodes.value
-	current_node = current_node.child_nodes
-end
+test_tree = BinarySearchTree.new
+data_set = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324].sort
+test_tree.build_tree(data_set)
