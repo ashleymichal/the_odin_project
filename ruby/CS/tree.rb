@@ -1,28 +1,15 @@
 class BinarySearchTree
 	attr_accessor :root
-	def initialize
-	end
-
 	# takes an array of data and turns it into a binary tree full of Node objects
-	# assumes data_set is not sorted
+	# assumes data_set is sorted
 	def build_tree data_set, parent=nil
-		puts "-----"
-		case data_set.length
-		when 0
-			return nil
-		when 1
-			return nil if data_set[0] == parent.value || data_set[0] == parent.parent.value
-			return Node.new(data_set[0], parent)
-		else
-			middle = data_set.length / 2
-			puts "Data set is #{data_set.length} elements"
-			puts "The center element is #{data_set[middle]}"
-			current_node = Node.new(data_set[middle], parent)
-			puts "New node created: #{current_node.value}"
-			root=(current_node) if parent.nil?
-			current_node.left_child=(build_tree(data_set[0...middle], current_node))
-			current_node.right_child=(build_tree(data_set[middle+1..-1], current_node))
-		end
+		return nil if data_set.length == 0
+		middle = data_set.length / 2
+		current_node = Node.new(data_set[middle], parent)
+		@root = current_node if parent.nil?
+		return current_node if data_set.length == 1
+		current_node.left_child=(build_tree(data_set[0...middle], current_node))
+		current_node.right_child=(build_tree(data_set[middle+1..-1], current_node))
 	end
 
 	class Node
@@ -36,6 +23,7 @@ class BinarySearchTree
 	end
 end
 
+data_set = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324].sort
 tree = BinarySearchTree.new
-data_set = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
 tree.build_tree(data_set)
+puts tree.root.value
