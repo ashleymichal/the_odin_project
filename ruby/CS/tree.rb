@@ -24,8 +24,18 @@ class BinarySearchTree
 
 	# sets the parent/child relationships for two nodes
 	def set_parent_child parent, child
-		parent > child ? (parent.left = child) : (parent.right = child)
+		parent > child ? parent.left = child : parent.right = child
 		child.parent = parent
+	end
+
+	def search value
+		node = root
+		loop do
+			return "#{node.value} found in tree" if node.value == value
+			node = node.value > value ? node.left : node.right
+			break if node.nil?
+		end
+		"The value #{value} was not found."
 	end
 
 	class Node
@@ -55,7 +65,7 @@ if __FILE__ == $0
   data_set = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]#.sort
 	tree = BinarySearchTree.new data_set
 	puts tree.build_tree
-	puts tree.root.value
+	puts tree.search(23)
 end
 
 	# takes an array of data and turns it into a binary tree full of Node objects
