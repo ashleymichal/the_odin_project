@@ -14,14 +14,6 @@ class Board
 	end
 end
 
-# class Space
-# 	attr_reader :x, :y
-# 	def initialize coordinates
-# 		@x = coordinates[0]
-# 		@y = coordinates[1]
-# 	end
-# end
-
 class Knight
 	@@MOVES = [ [ 1,2], [ 1,-2],
 							[-1,2], [-1,-2],
@@ -32,22 +24,17 @@ class Knight
 	def initialize position, path = []
 		@position = position
 		@path = path + [position]
+		@board = Board.new
 	end
-
-	# def position
-	# 	[@position.x, @position.y]
-	# end
 
 	def possible_moves
 		moves = []
 		@@MOVES.each do |move|
 			moves << [position,move].transpose.map {|x| x.reduce(:+)}
 		end
-		moves.select { |position| $board.spaces.include?(position) }
+		moves.select { |position| @board.spaces.include?(position) }
 	end
 end
-
-$board = Board.new
 
 def knight_moves start, finish
 	queue = []
@@ -59,11 +46,13 @@ def knight_moves start, finish
 		end
 		knight = queue.shift
 	}
-	knight.path
+	number_moves = knight.path.length
+	puts "You made it in #{number_moves} moves!  Here's your path:"
+	knight.path.each { |move| p move }
 end
 
 if __FILE__ == $0
-	start = [0,0]
-	finish = [5,4]
-	p knight_moves(start, finish)
+	start = [3,3]
+	finish = [4,3]
+	knight_moves(start, finish)
 end
