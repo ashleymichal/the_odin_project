@@ -8,35 +8,62 @@ class Board
 	def build_board
 		8.times do |x|
 			8.times do |y|
-				@spaces << Space.new([x, y])
+				@spaces << [x, y]
 			end
 		end
 	end
 end
 
-class Space
-	attr_reader :x, :y
-	def initialize coordinates
-		@x = coordinates[0]
-		@y = coordinates[1]
-	end
-end
+# class Space
+# 	attr_reader :x, :y
+# 	def initialize coordinates
+# 		@x = coordinates[0]
+# 		@y = coordinates[1]
+# 	end
+# end
 
 class Knight
-	attr_accessor :start, :finish, :moves
-	def initialize start, finish, moves = []
-		@start = Space.new(start)
-		@finish = Space.new(finish)
-		@moves = moves << @start
+	@@MOVES = [ [ 1,2], [ 1,-2],
+							[-1,2], [-1,-2],
+							[ 2,1], [ 2,-1],
+							[-2,1], [-2,-1] ]
+
+	attr_reader :position, :path
+	def initialize position, path = []
+		@position = position
+		@path = path + [position]
+	end
+
+	# def position
+	# 	[@position.x, @position.y]
+	# end
+
+	def possible_moves
+		moves = []
+		@@MOVES.each do |move|
+			moves << [position,move].transpose.map {|x| x.reduce(:+)}
+		end
+		moves.select { |position| $board.spaces.include?(position) }
 	end
 end
 
+$board = Board.new
+
 def knight_moves start, finish
-	board = Board.new
-	knight = Knight.new(start, finish)
-	start if start == finish
+	queue = []
+	knight = Knight.new(start)
+	loop {
+		break if knight.path.last == finish
+		knight.possible_moves.each do |move|
+			queue << Knight.new(move, knight.path)
+		end
+		knight = queue.shift
+	}
+	knight.path
 end
 
 if __FILE__ == $0
-	p knight_moves [0,0], [0,0]
+	start = [0,0]
+	finish = [5,4]
+	p knight_moves(start, finish)
 end
