@@ -40,7 +40,7 @@ def knight_moves start, finish
 	queue = []
 	knight = Knight.new(start)
 	loop {
-		break if knight.path.last == finish
+		break if knight.position == finish
 		knight.possible_moves.each do |move|
 			queue << Knight.new(move, knight.path)
 		end
@@ -52,7 +52,7 @@ def knight_moves start, finish
 end
 
 if __FILE__ == $0
-	start = [3,3]
-	finish = [4,3]
+	start = [0,0]
+	finish = [3,5]
 	knight_moves(start, finish)
 end
