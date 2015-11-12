@@ -25,7 +25,7 @@ class TicTacToe
         @mark = @@number_of_players == 0 ? :X : :O 
         @@number_of_players += 1
       else
-        puts "There can only be 2 players" # this should actually throw an exception and ask again... ought to be a more elegant way to handle this.
+        raise "There can only be 2 players" # this should actually throw an exception and ask again... ought to be a more elegant way to handle this.
       end
     end
   end
@@ -123,5 +123,7 @@ class TicTacToe
   end
 end
 
-new_game = TicTacToe.new
-new_game.start
+if __FILE__ == $0
+  new_game = TicTacToe.new
+  new_game.start
+end
