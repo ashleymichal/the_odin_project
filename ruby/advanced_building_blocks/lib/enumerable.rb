@@ -65,12 +65,10 @@ module Enumerable
     new_array
   end
   
-  def my_inject
-    # first we need to determine the type of items in array
-    self.my_each do |item|
-      yield(new_thing,item)
-    end
-    new_thing
+  def my_inject(num = nil)
+    accumulator = num.nil? ? 0 : num
+    my_each { |i| accumulator = yield(accumulator, i) }
+    accumulator
   end
 end
 
