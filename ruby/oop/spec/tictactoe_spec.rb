@@ -18,15 +18,44 @@ describe TicTacToe do
 				end
 
 			end
+
 		end
+
 	end
 
 	describe Board do
 
 		context 'a new game board' do
 
-			it 'shows three rows of three blank spaces' do
-				expect{ subject.show }.to output("    1   2   3\nA  |   |   |   |\nB  |   |   |   |\nC  |   |   |   |\n").to_stdout
+			it 'shows three rows (A, B, C) of three blank spaces (1, 2 ,3)' do
+				expect { subject.show }.to output(/\s*1\s*2\s*3\s*A\W*B\W*C/).to_stdout
+			end
+
+		end
+
+		context 'player 1 makes a mark' do
+
+			it 'shows an X on the board' do
+				# skip "need to make Player 1 make a mark first"
+				subject.place_mark('a1', :X)
+				expect { subject.show }.to output(/X/).to_stdout
+			end
+
+		end
+
+		context 'when filled' do
+
+			before(:example) do
+				board = Board.new
+				board.spaces.values.each do |row|
+					row.map { |space| [:X, :O].sample }
+				end
+			end
+
+			let(:game) { TicTacToe.new board }
+
+			it 'calls the #game_over method' do
+				expect(:game).to receive(:game_over)
 			end
 
 		end
@@ -37,4 +66,4 @@ end
 
 
 # user story (2 users)
-# game begins and user is presented with a board.
+# 
