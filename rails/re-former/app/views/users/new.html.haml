@@ -1,5 +1,9 @@
 %h2 New User
 
+%ul
+	- @user.errors.full_messages.each do |message|
+		%li= message
+
 = form_for @user do |f|
 	= label :username, "Username"
 	= f.text_field :username, :value => 'ExampleUser'
