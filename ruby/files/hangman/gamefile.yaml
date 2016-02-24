@@ -1,9 +1,0 @@
----
-:secret_word: bruckner
-:guess_log: !ruby/object:Hangman::GuessLog
-  guesses:
-  - b
-  - r
-  - u
-  - k
-:count: 12
