@@ -7,69 +7,22 @@ class TicTacToe
   ]
   def initialize
     # initialize 2 players, assign playerX to X and playerO to O
-    @playerX = Player.new
-    @playerO = Player.new
+    player = Struct.new(:mark)
+    @playerX = player.new('X')
+    @playerO = player.new('O')
     # initialize board
     @spaces = []
-    board
+    construct_board
   end
   
-  class Player
-    attr_reader :mark
-    # there can only be 2 players...
-    @@number_of_players = 0
-    @@max_number_of_players = 2
-    # later can implement ability to name players, not yet though
-    def initialize
-      unless @@number_of_players >= @@max_number_of_players
-        @mark = @@number_of_players == 0 ? :X : :O 
-        @@number_of_players += 1
-      else
-        raise "There can only be 2 players" # this should actually throw an exception and ask again... ought to be a more elegant way to handle this.
-      end
-    end
-  end
-
-  class Space
-    @@default_mark = " "
-    def initialize(position)
-      @position = position
-      @mark = @@default_mark
-    end
-    def mark=(new_mark)
-      if @mark == @@default_mark
-        @mark = new_mark
-      else
-        raise "That space is already filled"
-      end
-    end
-    def position
-      @position
-    end
-    def mark
-      @mark
-    end
-  end
-  
-  def board
+  def construct_board
     @@space_names.each do |position|  
       @spaces << Space.new(position)
     end
   end
   
-  def place_mark(mark)
-    begin
-      print "Pick a space by typing in its coordinates i.e. A1: "
-      position = gets.chomp.upcase
-      space = find_space_by_position(position)
-      space.mark=(mark)
-    rescue NoMethodError
-      puts "That is not a space. Try again"
-      retry
-    rescue
-      puts $!
-      retry
-    end
+  def place_mark(mark, space)
+    space.mark=(mark)
   end
   
   def find_space_by_position(position)
