@@ -9,9 +9,10 @@ describe 'TicTacToe' do
     context 'winning combo' do
       after :each do
         @spaces.each { |space| game.place_mark(:X, space) }
+        allow(game).to receive(:puts)
+        allow(game).to receive(:show_board)
+        allow(game).to receive(:select_space)
         expect(game).to receive(:game_over)
-        expect(game).to receive(:select_space)
-        expect(game).to receive(:show_board)
         expect(game.board_full?).to be false
         game.start
       end

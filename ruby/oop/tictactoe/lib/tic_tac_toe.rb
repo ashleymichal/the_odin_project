@@ -1,11 +1,12 @@
 class TicTacToe
   SPACES = [ :A1, :A2, :A3, :B1, :B2, :B3, :C1, :C2, :C3 ]
-  @@winning_combinations = [
+  WINNING_COMBINATIONS = [
     [:A1, :A2, :A3], [:B1, :B2, :B3], [:C1, :C2, :C3],
     [:A1, :B1, :C1], [:A2, :B2, :C2], [:A3, :B3, :C3],
     [:A1, :B2, :C3], [:A3, :B2, :C1]
   ]
   attr_reader :players, :active_player, :board
+  
   def initialize
     # initialize 2 players, assign playerX to X and playerO to O
     player = Struct.new(:mark)
@@ -13,22 +14,11 @@ class TicTacToe
     @active_player = @players[0]
     @board = Hash.new()
     SPACES.each { |space| @board[space] = ' ' }
-    start
-  end
-  
-  def place_mark(mark, space)
-    @board[space] = mark
-  end
-  
-  def find_spaces_by_mark(mark)
-    spaces = @board.keys.select { |space| @board[space] == mark }
-  end
-  
-  def board_full?
-    @board.values.none? { |space| space == ' ' }
   end
   
   def show_board
+    puts "Welcome to Tic Tac Toe!"
+    puts "It's #{@active_player.mark}'s turn!"
     puts "  1    2    3"
     puts "---------------"
     row = "A".ord
@@ -57,20 +47,30 @@ class TicTacToe
     raise ArgumentError unless (SPACES.include?(parsed_space) && @board[parsed_space] == ' ')
     parsed_space
   end
+  
+  def find_spaces_by_mark(mark)
+    spaces = @board.keys.select { |space| @board[space] == mark }
+  end
+  
+  def place_mark(mark, space)
+    @board[space] = mark
+  end
+  
+  def board_full?
+    @board.values.none? { |space| space == ' ' }
+  end
+
+  def victory?(player)
+    WINNING_COMBINATIONS.any? { |combo| combo - find_spaces_by_mark(player.mark) == [] }
+  end
 
   def game_over(winner)
     message = winner ? "#{winner.mark} wins!" : "Cat's game"
     puts message
   end
-
-  def victory?(player)
-    @@winning_combinations.any? { |combo| combo - find_spaces_by_mark(player.mark) == [] }
-  end
     
   def start
     until board_full?
-      puts "Welcome to Tic Tac Toe!"
-      puts "It's #{@active_player.mark}'s turn!"
       show_board
       place_mark(@active_player.mark, select_space)
       return game_over(@active_player) if victory?(@active_player)
@@ -83,6 +83,7 @@ end
 if __FILE__ == $0
   while true
     new_game = TicTacToe.new
+    new_game.start
     puts "would you like to play again? (Y/N)"
     again = gets.chomp
     break unless again.match(/y/i)
